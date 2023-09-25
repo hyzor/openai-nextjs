@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 type ButtonProps = {
   onSubmit: (e: React.SyntheticEvent) => void;
-  onChange: (e: React.SyntheticEvent) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   input: string;
 };
 
