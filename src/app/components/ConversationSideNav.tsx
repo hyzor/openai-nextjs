@@ -8,6 +8,8 @@ type ConversationSideNavProps = {
 };
 
 const ConversationSideNav = ({ conversations }: ConversationSideNavProps) => {
+  console.log(conversations);
+
   useEffect(() => {
     const init = async () => {
       const { Sidenav, initTE } = await import("tw-elements");

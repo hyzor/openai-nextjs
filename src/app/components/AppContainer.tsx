@@ -39,7 +39,7 @@ const AppContainer = () => {
     setResponses((responses) => [...responses, newResponse]);
   }
 
-  const onChange = ({ target }) => {
+  const onChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setInput(target.value);
   };
 

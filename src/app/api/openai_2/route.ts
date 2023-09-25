@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+//import OpenAI from "openai";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
