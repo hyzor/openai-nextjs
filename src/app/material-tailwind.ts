@@ -14,6 +14,7 @@ import {
   ListItemPrefix,
   ListItemSuffix,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 
 export {
@@ -30,4 +31,5 @@ export {
   ListItemPrefix,
   ListItemSuffix,
   IconButton,
+  Spinner,
 };

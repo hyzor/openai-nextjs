@@ -3,7 +3,12 @@ import { NextResponse } from "next/server";
 import { kv } from "@vercel/kv";
 import { Conversation, User } from "@/app/types";
 
-//import OpenAI from "openai";
+import OpenAI from "openai";
+import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_KEY,
+});
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -19,6 +24,16 @@ export async function GET(req: Request) {
 
   const dateNowIso = new Date().toISOString();
 
+  const completion = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: prompt },
+    ],
+    model: "gpt-3.5-turbo",
+  });
+
+  if (!completion.choices[0].message.content) return NextResponse.error();
+
   const conversation: Conversation = {
     id: newId,
     creationDate: dateNowIso,
@@ -26,7 +41,7 @@ export async function GET(req: Request) {
     messages: [
       {
         prompt,
-        message: "Hello world!",
+        message: completion.choices[0].message.content,
       },
     ],
   };
@@ -45,6 +60,24 @@ export async function POST(req: Request) {
 
   const body = (await req.json()) as Conversation;
 
+  const openAiMsgs = new Array<ChatCompletionMessageParam>();
+
+  openAiMsgs.push({ role: "system", content: "You are a helpful assistant." });
+
+  body.messages.forEach((msg) => {
+    openAiMsgs.push({ role: "user", content: msg.prompt });
+    openAiMsgs.push({ role: "assistant", content: msg.message });
+  });
+
+  openAiMsgs.push({ role: "user", content: prompt });
+
+  const completion = await openai.chat.completions.create({
+    messages: openAiMsgs,
+    model: "gpt-3.5-turbo",
+  });
+
+  if (!completion.choices[0].message.content) return NextResponse.error();
+
   const conversation: Conversation = {
     id: body.id,
     creationDate: body.creationDate,
@@ -53,7 +86,7 @@ export async function POST(req: Request) {
       ...body.messages,
       {
         prompt,
-        message: "Hello world!",
+        message: completion.choices[0].message.content,
       },
     ],
   };

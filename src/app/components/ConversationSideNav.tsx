@@ -10,6 +10,7 @@ import {
   ListItemPrefix,
   ListItemSuffix,
   IconButton,
+  Spinner,
 } from "../material-tailwind";
 import { Conversation } from "../types";
 
@@ -18,6 +19,7 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 type ConversationSideNavProps = {
   conversations: Conversation[];
   curConversationId: number | undefined;
+  isLoading: boolean;
   onClick: (conversationId: number) => void;
   onClickNew: () => void;
   onClickDel: (conversationId: number) => void;
@@ -29,9 +31,10 @@ const ConversationSideNav = ({
   onClickDel,
   conversations,
   curConversationId,
+  isLoading,
 }: ConversationSideNavProps) => {
   return (
-    <Card className="fixed left-0 top-0 h-screen w-full max-w-[20rem] p-4 shadow-xl">
+    <Card className="fixed z-10 left-0 top-0 h-screen w-full max-w-[20rem] p-4 shadow-xl">
       <div className="mb-2 p-4">
         <Typography variant="h5" color="blue-gray">
           Conversations
@@ -45,6 +48,11 @@ const ConversationSideNav = ({
           New
         </ListItem>
         <hr className="my-2 border-blue-gray-50" />
+        {isLoading && (
+          <div className="flex flex-col items-center mt-4">
+            <Spinner className="h-6 w-6" />
+          </div>
+        )}
         {conversations
           .sort((a, b) =>
             a.lastMessageDate > b.lastMessageDate
@@ -59,7 +67,7 @@ const ConversationSideNav = ({
               key={i}
               onClick={() => onClick(conversation.id)}
             >
-              Conversation {conversation.id}
+              {conversation.messages[0].prompt}
               <ListItemSuffix>
                 <IconButton
                   onClick={() => onClickDel(conversation.id)}

@@ -17,10 +17,16 @@ const AppContainer = () => {
     [] as Conversation[]
   );
 
+  const [isLoadingResponse, setIsLoadingResponse] = React.useState(false);
+  const [isLoadingConversations, setIsLoadingConversations] =
+    React.useState(false);
+
   React.useEffect(() => {
     async function getConversations() {
+      setIsLoadingConversations(true);
       const conversations = await getConversationsForUser(1);
       if (conversations) setConversations(conversations);
+      setIsLoadingConversations(false);
     }
 
     getConversations();
@@ -28,6 +34,7 @@ const AppContainer = () => {
 
   async function onSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
+    setIsLoadingResponse(true);
 
     if (curConversationId) {
       const conversation = findConversation(curConversationId);
@@ -58,6 +65,7 @@ const AppContainer = () => {
     }
 
     setInput("");
+    setIsLoadingResponse(false);
   }
 
   const onChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,14 +104,17 @@ const AppContainer = () => {
         onClickDel={onClickDelConversation}
         curConversationId={curConversationId}
         conversations={conversations}
+        isLoading={isLoadingConversations}
       />
-      <div className="relative h-10 w-full min-w-[200px] max-w-[36rem]">
+      <div className="relative ml-64 h-10 w-full min-w-[200px] max-w-[46rem]">
         <InputWithButton
           onSubmit={onSubmit}
           onChange={onChange}
           input={input}
+          isLoading={isLoadingResponse}
         />
         <MessageContainer
+          isLoading={isLoadingResponse}
           responses={
             curConversationId
               ? findConversation(curConversationId)?.messages
